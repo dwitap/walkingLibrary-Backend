@@ -6,6 +6,9 @@ const { body } = require("express-validator")
 const router = express.Router()
 // const { upload } = require("../lib/uploader");
 
+router.get("/verification", userController.verifyUser);
+router.post("/verification", userController.verifyUserResend);
+
 router.get("/", bookController.showAllData)
 router.post(
     "/register",
