@@ -1,16 +1,16 @@
+const db = require("../models")
+
+Books = db.Books
+
 const bookController = {
-    showAllData: async (req, res) => {
+    showAllBook: async (req, res) => {
         try {
-            const showDataById = await Post.findAll({
-                where: {
-                  UserId: req.user.id,
-                },
-                // include: [{ model: db.User }],
-              });
+            
+            const showBookById = await Books.findAll(id);
         
               return res.status(200).json({
-                message: "Showing data specified this account!",
-                data: showDataById,
+                message: "Showing all books",
+                data: showBookById,
               });
         } catch (error) {
             console.log(error)
