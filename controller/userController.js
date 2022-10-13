@@ -132,7 +132,7 @@ const userController = {
           }
     
           await db.Member.update(
-            {is_verified: true}, {
+            {verified: true}, {
             where: {
               id: validToken.id
             }
@@ -156,7 +156,7 @@ const userController = {
           const verificationToken = createVerificationToken({
             id: req.user.id
           })
-          const verificationLink = `http://localhost:2000/auth/verification?verification_token=${verificationToken}`
+          const verificationLink = `http://localhost:2000/user/verification?verification_token=${verificationToken}`
     
     
           const userSaatIni = await db.Member.findByPk(req.user.id)
