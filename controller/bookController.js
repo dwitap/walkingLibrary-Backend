@@ -43,6 +43,21 @@ const bookController = {
   },
   sortBookById: async (req, res) => {
     try {
+        const { _limit = 5, _page = 1, _sortDir = "DESC" } = req.query
+
+        const findAllSort = await db.Books.findAll({
+        // include: [{ model: db.User }],
+        // limit: Number(_limit),
+        // offset: (_page - 1) * _limit,
+        order: [
+          ["title", _sortDir]
+        ]
+      })
+    
+      return res.status(200).json({
+        message: "Showing all books",
+        data: findAllSort,
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json({

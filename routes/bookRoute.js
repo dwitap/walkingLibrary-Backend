@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/", bookController.showAllBook);
 router.post("/:genre", bookController.filterBookById);
-router.post("/sort/:id", bookController.sortBookById);
+router.get("/sort", bookController.sortBookById);
 router.get('/:id', bookController.detailBookByPk);
 
 module.exports = router;
