@@ -29,8 +29,7 @@ const bookController = {
           },
         },
       });
-
-      return res.status(200).json({
+       return res.status(200).json({
         message: "Showing all books",
         data: filterBookById,
       });
@@ -41,6 +40,24 @@ const bookController = {
       });
     }
   },
+
+    detailBookByPk: async (req, res) => {
+        try { 
+            const findBooksByPk = await db.Books.findByPk(req.params.id)
+        
+            return res.status(200).json({
+                message: "Show Book Detail",
+                data: findBooksByPk
+            })
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({
+                message: "Server Error detail by pk"
+            })
+        }
+
+    },
+     
   sortBookById: async (req, res) => {
     try {
         const { _limit = 5, _page = 1, _sortDir = "DESC" } = req.query
