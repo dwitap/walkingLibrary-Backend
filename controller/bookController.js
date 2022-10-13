@@ -6,7 +6,7 @@ const bookController = {
     showAllBook: async (req, res) => {
         try {
             
-            const showBookById = await Books.findAll(id);
+            const showBookById = await Books.findAll();
         
               return res.status(200).json({
                 message: "Showing all books",

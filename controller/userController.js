@@ -3,14 +3,17 @@ const { validateVerificationToken } = require("../lib/verification");
 const db = require("../models")
 const { signToken } = require("../lib/jwt")
 const emailer = require("../lib/emailer")
-const { createVerificationToken } = require("../lib/verification")
+const { createVerificationToken } = require("../lib/verification");
+const { Op } = require("sequelize");
+const fs = require("fs")
+const handlebars = require("handlebars")
 
 const userController = {
     registerMember: async (req, res) => {
         try {
             const { NIM, username, email, password } = req.body
 
-            const findUserByUsernameOrEmail = await User.findOne({
+            const findUserByUsernameOrEmail = await db.Member.findOne({
                 where: {
                     [Op.or]: {
                         username,
@@ -25,17 +28,19 @@ const userController = {
                 })
             }
 
-            const newUser = await User.create({
+            const hashedPassword = bcrypt.hashSync(password, 5)
+
+            const newUser = await db.Member.create({
                 NIM,
                 username,
                 email,
-                password,
+                password: hashedPassword,
             })
 
             const verificationToken = createVerificationToken({
                 id: newUser.id,
             })
-            const verificationLink = `http://localhost:2000/auth/verification?verification_token=${verificationToken}`
+            const verificationLink = `http://localhost:2000/user/verification?verification_token=${verificationToken}`
 
             const rawHTML = fs.readFileSync(
                 "templates/register_member.html",
@@ -69,7 +74,7 @@ const userController = {
         try { 
             const { usernameOrEmail, password } = req.body
 
-            const findUserByUsernameOrEmail = await User.findOne({
+            const findUserByUsernameOrEmail = await db.Member.findOne({
                 where: {
                     [Op.or]: {
                         username: usernameOrEmail,
@@ -84,10 +89,12 @@ const userController = {
                 })
             }
 
+
             const passwordValid = bcrypt.compareSync(
                 password,
                 findUserByUsernameOrEmail.password
             )
+            
 
             if (!passwordValid) {
                 return res.status(400).json({
@@ -124,13 +131,14 @@ const userController = {
             })
           }
     
-          await User.update(
+          await db.Member.update(
             {is_verified: true}, {
             where: {
               id: validToken.id
             }
           })
-    
+
+        
         //   Redirect ke page tertentu
         //   return res.redirect('http://localhost:3000/login')
           return res.status(200).json({
@@ -151,7 +159,7 @@ const userController = {
           const verificationLink = `http://localhost:2000/auth/verification?verification_token=${verificationToken}`
     
     
-          const userSaatIni = await User.findByPk(req.user.id)
+          const userSaatIni = await db.Member.findByPk(req.user.id)
           const rawHTML = fs.readFileSync("templates/register_user_resend.html", "utf-8");
           const compileHTML = handlebars.compile(rawHTML);
           const result = compileHTML({
