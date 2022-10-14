@@ -91,6 +91,29 @@ const bookController = {
       });
     }
   },
+  findByCart: async (req, res) => {
+    try {
+        const findAllInCart = await db.Transaction.findAll({
+          where: {
+            ItemId: id
+          },
+        include: [{ model: db.User }],
+        order: [
+          ["title", _sortDir]
+        ]
+      })
+    
+      return res.status(200).json({
+        message: "Showing all books",
+        data: findAllInCart,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "Server Error fetching cart",
+      });
+    }
+  },
 };
 
 module.exports = bookController;

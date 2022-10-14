@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             Transaction.belongsTo(models.Member)
-            Transaction.hasOne(models.Items)
+            Transaction.belongsTo(models.Items)
             // define association here
         }
     }
