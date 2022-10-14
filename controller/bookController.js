@@ -84,6 +84,11 @@ const bookController = {
   },
   detailBookByPk: async (req, res) => {
     try {
+      const findDetail = await db.Books.findByPk(req.params.id)
+      return res.status(200).json({
+        message: "Showing all books",
+        data: findDetail,
+      })
     } catch (error) {
       console.log(error);
       return res.status(500).json({
