@@ -18,6 +18,8 @@ app.use('/user', userRoute)
 const bookRoute = require("./routes/bookRoute.js");
 app.use('/book', bookRoute)
 
+const cartRoute = require("./routes/cartRoute.js");
+app.use('/cart', cartRoute)
 
 
 app.listen(PORT, async () => {

@@ -9,5 +9,6 @@ router.post("/:genre", bookController.filterBookById);
 router.get("/sort", bookController.sortBookById);
 router.get("/cart", bookController.findByCart);
 router.get('/:id', bookController.detailBookByPk);
+// router.delete('/:id', bookController.deleteBookById);
 
 module.exports = router;
