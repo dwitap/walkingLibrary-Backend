@@ -1,10 +1,10 @@
 const bcrypt = require("bcrypt")
-const { validateVerificationToken } = require("../lib/verification");
+const { validateVerificationToken } = require("../lib/verification")
 const db = require("../models")
 const { signToken } = require("../lib/jwt")
 const emailer = require("../lib/emailer")
-const { createVerificationToken } = require("../lib/verification");
-const { Op } = require("sequelize");
+const { createVerificationToken } = require("../lib/verification")
+const { Op } = require("sequelize")
 const fs = require("fs")
 const handlebars = require("handlebars")
 
@@ -16,6 +16,7 @@ const userController = {
             const findUserByUsernameOrEmail = await db.Member.findOne({
                 where: {
                     [Op.or]: {
+                        NIM,
                         username,
                         email,
                     },
@@ -71,122 +72,118 @@ const userController = {
         }
     },
     loginUser: async (req, res) => {
-        try { 
-            const { usernameOrEmail, password } = req.body
+        try {
+            const { NIM, password } = req.body
 
-            const findUserByUsernameOrEmail = await db.Member.findOne({
+            const findMemberByNIM = await db.Member.findOne({
                 where: {
-                    [Op.or]: {
-                        username: usernameOrEmail,
-                        email: usernameOrEmail,
-                    },
+                    NIM: NIM ? NIM : "",
                 },
             })
 
-            if (!findUserByUsernameOrEmail) {
+            if (!findMemberByNIM) {
                 return res.status(400).json({
-                    message: "User Not Found"
+                    message: "User Not Found",
                 })
             }
-
 
             const passwordValid = bcrypt.compareSync(
                 password,
-                findUserByUsernameOrEmail.password
+                findMemberByNIM.password
             )
-            
 
             if (!passwordValid) {
                 return res.status(400).json({
-                    message: "Wrong password"
+                    message: "Wrong password",
                 })
             }
 
-            delete findUserByUsernameOrEmail.dataValues.password
+            delete findMemberByNIM.dataValues.password
 
             const token = signToken({
-                id: findUserByUsernameOrEmail.id,
+                id: findMemberByNIM.id,
             })
 
             return res.status(201).json({
-                message: "Login user",
-                data: findUserByUsernameOrEmail,
+                message: "Member login",
+                data: findMemberByNIM,
                 token,
             })
         } catch (error) {
             console.log(error)
             return res.status(500).json({
-                message: "Server Error login User",
+                message: "Server Error Login Member",
             })
         }
     },
     verifyUser: async (req, res) => {
         try {
-          const { verification_token } = req.query
-          const validToken = validateVerificationToken(verification_token)
-          
-          if (!validToken){
-            res.status(401).json({
-              message: "Token invalid"
-            })
-          }
-    
-          await db.Member.update(
-            {verified: true}, {
-            where: {
-              id: validToken.id
-            }
-          })
+            const { verification_token } = req.query
+            const validToken = validateVerificationToken(verification_token)
 
-        
-        //   Redirect ke page tertentu
-        //   return res.redirect('http://localhost:3000/login')
-          return res.status(200).json({
-            message: "User verified"
-          })
+            if (!validToken) {
+                res.status(401).json({
+                    message: "Token invalid",
+                })
+            }
+
+            await db.Member.update(
+                { verified: true },
+                {
+                    where: {
+                        id: validToken.id,
+                    },
+                }
+            )
+
+            //   Redirect ke page tertentu
+            //   return res.redirect('http://localhost:3000/login')
+            return res.status(200).json({
+                message: "User verified",
+            })
         } catch (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: "Server error",
-          });
+            console.log(err)
+            return res.status(500).json({
+                message: "Server error",
+            })
         }
-      },
-      verifyUserResend: async (req, res) => {
+    },
+    verifyUserResend: async (req, res) => {
         try {
-          const verificationToken = createVerificationToken({
-            id: req.user.id
-          })
-          const verificationLink = `http://localhost:2000/user/verification?verification_token=${verificationToken}`
-    
-    
-          const userSaatIni = await db.Member.findByPk(req.user.id)
-          const rawHTML = fs.readFileSync("templates/register_user_resend.html", "utf-8");
-          const compileHTML = handlebars.compile(rawHTML);
-          const result = compileHTML({
-            username: userSaatIni.username,
-            verificationLink,
-          });
-          // console.log()
-    
-    
-          await emailer({
-            to: userSaatIni.email,
-            html: result,
-            subject: "Resend Token Email",
-            text: "Halo dunia",
-          });
-          
-    
-          return res.status(200).json({
-            message: "Resend successfully"
-          })
+            const verificationToken = createVerificationToken({
+                id: req.user.id,
+            })
+            const verificationLink = `http://localhost:2000/user/verification?verification_token=${verificationToken}`
+
+            const userSaatIni = await db.Member.findByPk(req.user.id)
+            const rawHTML = fs.readFileSync(
+                "templates/register_user_resend.html",
+                "utf-8"
+            )
+            const compileHTML = handlebars.compile(rawHTML)
+            const result = compileHTML({
+                username: userSaatIni.username,
+                verificationLink,
+            })
+            // console.log()
+
+            await emailer({
+                to: userSaatIni.email,
+                html: result,
+                subject: "Resend Token Email",
+                text: "Halo dunia",
+            })
+
+            return res.status(200).json({
+                message: "Resend successfully",
+            })
         } catch (err) {
-          console.log(err);
-          return res.status(500).json({
-            message: "Server error",
-          });
+            console.log(err)
+            return res.status(500).json({
+                message: "Server error",
+            })
         }
-      }
+    },
 }
 
 module.exports = userController
