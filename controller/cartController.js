@@ -9,7 +9,8 @@ const cartController = {
           const showCartById = await Carts.findAll({
             include: [{ model: db.Books }],
           });
-          console.log(showCartById)
+          // console.log(showCartById)
+
           return res.status(200).json({
             message: "Showing all Carts",
             data: showCartById,
