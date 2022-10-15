@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     }
     Carts.init(
         {
+            status: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            }
+
         },
         {
             sequelize,

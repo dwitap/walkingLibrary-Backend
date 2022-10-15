@@ -61,6 +61,53 @@ const cartController = {
           });
         }
       },
+
+      showBorrowedBook: async (req, res) => {
+        try {
+          const showBorrowedBook = await Carts.findAll({
+            where:{
+              status: "1" || true
+            },
+            include: [{ model: db.Books }],
+          });
+          // console.log(showCartById)
+
+          if (showBorrowedBook.length == 0){
+            return res.status(200).json({
+              message: "Nothing to show. You have no borrowed books.",
+            });
+
+          }
+          return res.status(200).json({
+            message: "Showing all Carts",
+            data: showBorrowedBook,
+          });
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({
+            message: "Server Error show all cart data ",
+          });
+        }
+      },
+
+      returnDeleteCart: async (req, res) => {
+        try {
+          // const { status } = req.body
+          await Carts.update(
+            // { ...req.body }
+            // status: 1,
+          )
+        
+          return res.status(200).json({
+            message: "Deleted all borrowed books",
+          });
+        } catch (error) {
+          console.log(error);
+          return res.status(500).json({
+            message: "Server Error show all cart data ",
+          });
+        }
+      },
 };
 
 module.exports = cartController;
