@@ -7,10 +7,12 @@ const cartController = {
     showAllCart: async (req, res) => {
         try {
           const showCartById = await Carts.findAll({
+            where:{
+              status: "0" || false
+            },
             include: [{ model: db.Books }],
           });
           // console.log(showCartById)
-
           return res.status(200).json({
             message: "Showing all Carts",
             data: showCartById,
@@ -90,14 +92,37 @@ const cartController = {
         }
       },
 
+        confirmBorrow: async (req, res) => {
+          try {
+            await Carts.update({
+              status: "1" || true},
+              {
+              where:{
+                status: "0" || false
+              },
+            })
+            
+            return res.status(200).json({
+              message: "Confirmed borrow all books in cart",
+            });
+          } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+              message: "Server Error show all cart data ",
+            });
+          }
+        },
+
       returnDeleteCart: async (req, res) => {
         try {
-          // const { status } = req.body
-          await Carts.update(
-            // { ...req.body }
-            // status: 1,
-          )
-        
+          const { status } = req.body
+          await Carts.destroy({
+            where:{
+              status: "1" || true
+            },
+          })
+
+
           return res.status(200).json({
             message: "Deleted all borrowed books",
           });
