@@ -12,6 +12,7 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 
+const { verifyToken } = require("./middlewares/authMiddleware.js");
 const userRoute = require("./routes/userRoute.js");
 app.use('/user', userRoute)
 
