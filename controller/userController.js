@@ -139,7 +139,7 @@ const userController = {
 
             //   Redirect ke page tertentu
             //   return res.redirect('http://localhost:3000/login')
-            return res.redirect("/")
+            return res.redirect("http://localhost:3000/")
         } catch (err) {
             console.log(err)
             return res.status(500).json({
