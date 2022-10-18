@@ -138,9 +138,7 @@ const userController = {
 
             //   Redirect ke page tertentu
             //   return res.redirect('http://localhost:3000/login')
-            return res.status(200).json({
-                message: "User verified",
-            })
+            return res.redirect("/")
         } catch (err) {
             console.log(err)
             return res.status(500).json({
