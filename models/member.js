@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
             },
+            role: {
+                type: DataTypes.STRING,
+                defaultValue: "member",
+            }
         },
         {
             sequelize,

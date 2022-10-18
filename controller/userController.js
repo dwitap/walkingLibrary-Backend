@@ -11,7 +11,7 @@ const handlebars = require("handlebars")
 const userController = {
     registerMember: async (req, res) => {
         try {
-            const { NIM, username, email, password } = req.body
+            const { NIM, username, email, password, role } = req.body
 
             const findUserByUsernameOrEmail = await db.Member.findOne({
                 where: {
@@ -36,6 +36,7 @@ const userController = {
                 username,
                 email,
                 password: hashedPassword,
+                role,
             })
 
             const verificationToken = createVerificationToken({
