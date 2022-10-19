@@ -2,6 +2,7 @@ const express = require("express")
 const userController = require("../controller/userController")
 const bookController = require("../controller/bookController")
 const { body } = require("express-validator")
+const { verifyToken } = require("../middlewares/authMiddleware")
 // const verifyToken = require("../middllewares/authMiddleware");
 const router = express.Router()
 // const { upload } = require("../lib/uploader");
@@ -33,5 +34,6 @@ router.post(
     userController.registerMember
 )
 router.post("/login", userController.loginUser)
+router.get("/refreshToken", verifyToken, userController.keepUserLoggedIn)
 
 module.exports = router
