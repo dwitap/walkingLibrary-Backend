@@ -8,43 +8,36 @@ const bookController = {
     try {
       const page = parseInt(req.query._page) || 0
       const limit = parseInt(req.query._limit) || 10
-      const search = req.query.search_query || ""
+      const search = req.query._keywordHandler || ""
       const offset = limit * page
       const totalRows = await Books.count({
         where: {
           [Op.or]: [
-            {title: {[Op.like]: "%" + search + "%",},
-            },
-            {genre: {[Op.like]: "%" + search + "%",},
-            },
+            { title: { [Op.like]: "%" + search + "%" } },
+            { genre: { [Op.like]: "%" + search + "%" } },
           ],
         },
       })
-      const totalPage = Math.ceil(totalRows / limit);
+      const totalPage = Math.ceil(totalRows / limit)
       const showBookById = await Books.findAll({
         where: {
           [Op.or]: [
-            {title: {[Op.like]: "%" + search + "%",},
-            },
-            {genre: {[Op.like]: "%" + search + "%",},
-            },
+            { title: { [Op.like]: "%" + search + "%" } },
+            { genre: { [Op.like]: "%" + search + "%" } },
           ],
         },
         offset: offset,
         limit: limit,
-        order:[
-          ["id", "DESC"]
-        ]
+        order: [["id", "DESC"]],
       })
 
-      
       return res.status(200).json({
         // message: "Showing all books",
         data: showBookById,
         // page: page,
         limit: limit,
         totalRows: totalRows,
-        totalPage: totalPage
+        totalPage: totalPage,
       })
     } catch (error) {
       console.log(error)
@@ -148,6 +141,46 @@ const bookController = {
       })
     }
   },
+  deleteBookById: async (req, res) => {
+    try {
+          await Books.destroy({
+          where: {
+            id: req.params.id,
+          },
+        })
+      
+    
+      return res.status(200).json({
+        message: "Book deleted",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "Server Error deleting book",
+      });
+    }
+  },
+  addNewBook: async (req, res) => {
+    const { 
+      // isi detail book contoh cartController.addNewCart 
+    } = req.body;
+    try {
+      const newBook = await Books.create({
+        // isi detail book contoh cartController.addNewCart
+      });
+
+      return res.status(200).json({
+        message: "Book has been added",
+        data: newBook,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "Server Error adding book collection",
+      });
+    }
+  },
+  updateBook: async (req, res) => {}
 }
 
 module.exports = bookController

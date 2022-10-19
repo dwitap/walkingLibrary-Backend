@@ -28,8 +28,20 @@ const cartController = {
       addNewCart: async (req, res) => {
         const { BookId } = req.body;
         try {
+          const conditionDouble = await Carts.findOne({
+            where:{
+              BookId,
+            },
+          })
+          if (conditionDouble){
+            return res.status(400).json({
+              message: "Book cannot be double"
+            })
+          }
           const showCartById = await Carts.create({
             BookId,
+            MemberId: req.user.id,
+
           });
     
           return res.status(200).json({

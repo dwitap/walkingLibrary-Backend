@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             Member.hasMany(models.Transaction)
+            Member.hasMany(models.Carts)
             // define association here
         }
     }
@@ -28,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
             },
+            role: {
+                type: DataTypes.STRING,
+                defaultValue: "member",
+            }
         },
         {
             sequelize,
