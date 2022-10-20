@@ -36,7 +36,7 @@ const verifyToken = (req, res, next) => {
 const verifyAdmin = async (req, res, next) => {
   try {
     if (req.user.role == "admin") {
-      return res.status(401).json({
+      return res.status(400).json({
         message: "User is admin"
       })
     }

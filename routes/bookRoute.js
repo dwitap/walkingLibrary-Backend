@@ -12,7 +12,7 @@ router.get("/cart", bookController.findByCart);
 router.get('/:id', bookController.detailBookByPk);
 router.delete("/:id", verifyToken, verifyAdmin, bookController.deleteBookById)
 router.post("/", verifyAdmin, bookController.addNewBook)
-router.patch("/", verifyAdmin, bookController.updateBook)
+router.patch("/:id", verifyToken, verifyAdmin, bookController.updateBook)
 
 
 // router.delete('/:id', bookController.deleteBookById);

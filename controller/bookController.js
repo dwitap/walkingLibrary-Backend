@@ -1,15 +1,15 @@
-const { Op } = require("sequelize")
-const db = require("../models")
+const { Op } = require("sequelize");
+const db = require("../models");
 
-Books = db.Books
+Books = db.Books;
 
 const bookController = {
   showAllBook: async (req, res) => {
     try {
-      const page = parseInt(req.query._page) || 0
-      const limit = parseInt(req.query._limit) || 10
-      const search = req.query._keywordHandler || ""
-      const offset = limit * page
+      const page = parseInt(req.query._page) || 0;
+      const limit = parseInt(req.query._limit) || 10;
+      const search = req.query._keywordHandler || "";
+      const offset = limit * page;
       const totalRows = await Books.count({
         where: {
           [Op.or]: [
@@ -17,8 +17,8 @@ const bookController = {
             { genre: { [Op.like]: "%" + search + "%" } },
           ],
         },
-      })
-      const totalPage = Math.ceil(totalRows / limit)
+      });
+      const totalPage = Math.ceil(totalRows / limit);
       const showBookById = await Books.findAll({
         where: {
           [Op.or]: [
@@ -29,7 +29,7 @@ const bookController = {
         offset: offset,
         limit: limit,
         order: [["id", "DESC"]],
-      })
+      });
 
       return res.status(200).json({
         // message: "Showing all books",
@@ -38,86 +38,86 @@ const bookController = {
         limit: limit,
         totalRows: totalRows,
         totalPage: totalPage,
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         message: "Server Error show all data",
-      })
+      });
     }
   },
   filterBookById: async (req, res) => {
     try {
-      const { genre } = req.params
+      const { genre } = req.params;
       const filterBookById = await Books.findAll({
         where: {
           genre: {
             [Op.like]: `%${genre}%`,
           },
         },
-      })
+      });
       return res.status(200).json({
         message: "Showing all books",
         data: filterBookById,
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         message: "Server Error filter by id",
-      })
+      });
     }
   },
 
   detailBookByPk: async (req, res) => {
     try {
-      const findBooksByPk = await db.Books.findByPk(req.params.id)
+      const findBooksByPk = await db.Books.findByPk(req.params.id);
 
       return res.status(200).json({
         message: "Show Book Detail",
         data: findBooksByPk,
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         message: "Server Error detail by pk",
-      })
+      });
     }
   },
 
   sortBookById: async (req, res) => {
     try {
-      const { _limit = 5, _page = 1, _sortDir = "DESC" } = req.query
+      const { _limit = 5, _page = 1, _sortDir = "DESC" } = req.query;
 
       const findAllSort = await db.Books.findAll({
         // include: [{ model: db.User }],
         // limit: Number(_limit),
         // offset: (_page - 1) * _limit,
         order: [["title", _sortDir]],
-      })
+      });
 
       return res.status(200).json({
         message: "Showing all books",
         data: findAllSort,
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         message: "Server Error sort by id",
-      })
+      });
     }
   },
   detailBookByPk: async (req, res) => {
     try {
-      const findDetail = await db.Books.findByPk(req.params.id)
+      const findDetail = await db.Books.findByPk(req.params.id);
       return res.status(200).json({
         message: "Showing all books",
         data: findDetail,
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         message: "Server Error detail by pk",
-      })
+      });
     }
   },
   findByCart: async (req, res) => {
@@ -128,28 +128,27 @@ const bookController = {
         },
         include: [{ model: db.User }],
         order: [["title", _sortDir]],
-      })
+      });
 
       return res.status(200).json({
         message: "Showing all books",
         data: findAllInCart,
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(500).json({
         message: "Server Error fetching cart",
-      })
+      });
     }
   },
   deleteBookById: async (req, res) => {
     try {
-          await Books.destroy({
-          where: {
-            id: req.params.id,
-          },
-        })
-      
-    
+      await Books.destroy({
+        where: {
+          id: req.params.id,
+        },
+      });
+
       return res.status(200).json({
         message: "Book deleted",
       });
@@ -161,8 +160,8 @@ const bookController = {
     }
   },
   addNewBook: async (req, res) => {
-    const { 
-      // isi detail book contoh cartController.addNewCart 
+    const {
+      // isi detail book contoh cartController.addNewCart
     } = req.body;
     try {
       const newBook = await Books.create({
@@ -180,7 +179,46 @@ const bookController = {
       });
     }
   },
-  updateBook: async (req, res) => {}
-}
+  updateBook: async (req, res) => {
+    try {
+      const {
+        title,
+        author,
+        release_year,
+        ISBN,
+        publisher,
+        genre,
+        pages,
+        language,
+      } = req.body;
 
-module.exports = bookController
+      await Books.update(
+        {
+          title: title,
+          author: author,
+          release_year: release_year,
+          ISBN: ISBN,
+          publisher: publisher,
+          genre: genre,
+          pages: pages,
+          language: language,
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+        },
+      );
+      return res.status(200).json({
+        message: "Updated this book",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: "Server error updating book",
+      });
+    }
+  },
+};
+
+module.exports = bookController;
