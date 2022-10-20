@@ -6,10 +6,13 @@ Books = db.Books;
 const bookController = {
   showAllBook: async (req, res) => {
     try {
-      const page = parseInt(req.query._page) || 0;
-      const limit = parseInt(req.query._limit) || 10;
-      const search = req.query._keywordHandler || "";
-      const offset = limit * page;
+
+      const page = parseInt(req.query._page) || 0
+      const limit = parseInt(req.query._limit) || 10
+      const search = req.query._keywordHandler || ""
+      const order = req.query._sortDir || "ASC"
+      const offset = limit * page
+
       const totalRows = await Books.count({
         where: {
           [Op.or]: [
@@ -28,8 +31,8 @@ const bookController = {
         },
         offset: offset,
         limit: limit,
-        order: [["id", "DESC"]],
-      });
+        order: [["title", order]],
+      })
 
       return res.status(200).json({
         // message: "Showing all books",
@@ -195,6 +198,27 @@ const bookController = {
       });
     }
   },
+
+  deleteBookByGenre: async (req, res) => {
+    try {
+        await Books.destroy({
+            where: {
+                genre: req.params.genre
+            }
+        })        
+        return res.status(200).json({
+            message: "Book deleted"
+        })
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({
+            message: "Server error deleting book"
+        })
+        
+    }
+  }
+}
+
   updateBook: async (req, res) => {
     try {
       const {
@@ -236,5 +260,6 @@ const bookController = {
     }
   },
 };
+
 
 module.exports = bookController;
