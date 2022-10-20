@@ -8,26 +8,13 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            Items.hasOne(models.Transaction)
-            Items.belongsTo(models.Books)
+            // Items.hasOne(models.Transactions)
+            // Items.hasOne(models.Books)
             // define association here
         }
     }
     Items.init(
-        {
-            return_date: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            fine: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
-            return_status: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: false,
-            },
-        },
+        {},
         {
             sequelize,
             modelName: "Items",

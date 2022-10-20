@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            Member.hasMany(models.Transaction)
+            Member.hasMany(models.Transactions)
             Member.hasMany(models.Carts)
             // define association here
         }
@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
             role: {
                 type: DataTypes.STRING,
                 defaultValue: "member",
-            }
+            },
         },
         {
             sequelize,
