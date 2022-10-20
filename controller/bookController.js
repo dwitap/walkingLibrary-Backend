@@ -216,8 +216,7 @@ const bookController = {
         })
         
     }
-  }
-}
+  },
 
   updateBook: async (req, res) => {
     try {
