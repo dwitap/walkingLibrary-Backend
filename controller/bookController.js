@@ -161,12 +161,28 @@ const bookController = {
   },
   addNewBook: async (req, res) => {
     const {
-      // isi detail book contoh cartController.addNewCart
+      title,
+      author,
+      release_year,
+      ISBN,
+      publisher,
+      genre,
+      pages,
+      language,
     } = req.body;
     try {
-      const newBook = await Books.create({
-        // isi detail book contoh cartController.addNewCart
-      });
+      const newBook = await Books.create(
+        {
+          title: title,
+          author: author,
+          release_year: release_year,
+          ISBN: ISBN,
+          publisher: publisher,
+          genre: genre,
+          pages: pages,
+          language: language,
+        },
+      )
 
       return res.status(200).json({
         message: "Book has been added",
